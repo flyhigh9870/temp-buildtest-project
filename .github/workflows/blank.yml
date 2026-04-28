@@ -22,8 +22,8 @@ jobs:
         run: |
           cd faad2-2_8_8
           ./bootstrap
-          ./configure --enable-static --disable-shared LDFLAGS="-all-static"
-          make
+          ./configure --enable-static --disable-shared
+          make LDFLAGS="-all-static"
 
       - name: Check Static Link
         run: |
