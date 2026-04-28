@@ -1,0 +1,37 @@
+name: Build Static FAAD2
+
+on:
+  workflow_dispatch: # 직접 버튼을 누를 때만 실행
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential autoconf automake libtool wget
+
+      - name: Download FAAD2 2.8.8
+        run: |
+          wget https://github.com/knik0/faad2/archive/refs/tags/2_8_8.tar.gz
+          tar -xzvf 2_8_8.tar.gz
+
+      - name: Build Static Binary
+        run: |
+          cd faad2-2_8_8
+          ./bootstrap
+          ./configure --enable-static --disable-shared
+          make
+
+      - name: Check Static Link
+        run: |
+          ls -l faad2-2_8_8/frontend/faad
+          ldd faad2-2_8_8/frontend/faad || true
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: faad-static-binary
+          path: faad2-2_8_8/frontend/faad
